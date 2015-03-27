@@ -111,7 +111,7 @@
              * Values loader
              */
             var valsLoader = function (args) {
-                return self.vals(name, function (vals) {
+                var valsFn = self.vals(name, function (vals) {
                     if (!Array.isArray(vals)) {
                         vals = [vals];
                     }
@@ -122,9 +122,12 @@
                             }
                             return fn(args, val);
                         });
-                    }
+                    }        
                     return fn(args, vals);
                 });
+                
+                //console.log(fn.toString())
+                return valsFn;
             };
 
             /**
@@ -149,7 +152,7 @@
                     });
                 });
             }
-
+            
             return argsLoader;
         });
 
@@ -185,8 +188,10 @@
                                 return fn(args, v);
                             });
                         }
+                        
                         return fn(args, val);
                     };
+                                        
                     if (!Array.isArray(vals)) {
                         return eachFn(vals);
                     }
@@ -243,12 +248,23 @@
         if (!this.fn) {
             throw new Error('Inappropriate place to call .with()')
         }
-
+        
+        var self = this;
+        var args = Array.prototype.slice.call(arguments);
+        var val = args[0];
+        
+        // Handle promises
+        // TODO: implement a more robust check for whether the argument is a promise or not
+        // TODO: check the other arguments, not just the first!
+        if (val.then) {
+            return val.then(function (resolvedArg) {
+                return self.args('with', self.fn).apply(null, [resolvedArg]);
+            });
+        }
         /**
          * Merge multiple subsets of arguments
          */
         if (this._map) {
-            var self = this;
             return Array.prototype.map.call(arguments, function (args) {
                 if (!Array.isArray(args)) {
                     args = [args];
@@ -256,7 +272,7 @@
                 return self.args('with', self.fn).apply(self, args);
             });
         }
-
+        
         return this.args('with', this.fn).apply(null, Array.prototype.slice.call(arguments));
     };
 
@@ -296,7 +312,7 @@
      * @author Nate Ferrero
      */
     Command.prototype.args = function argsWrapper(name, done) {
-        var args = function args() {
+        var args = function args() {            
             return done(merge(arguments));
         };
         args.$name = name;
@@ -324,6 +340,7 @@
             if (last) {
                 args = last(args);
             }
+            
             return done(args);
         }, name);
     };
