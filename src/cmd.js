@@ -123,6 +123,13 @@
                             return fn(args, val);
                         });
                     }
+                    var arg = args[0];
+                    
+                    if (arg  && arg.then) {
+                        return arg.then(function(resolvedVal) { 
+                            return fn(args, resolvedVal);
+                        });
+                    }
                     return fn(args, vals);
                 });
             };
@@ -187,6 +194,19 @@
                         }
                         return fn(args, val);
                     };
+                    
+                    // Handle promises
+                    var arg = args[0];
+                    
+                    if (arg  && arg.then) {
+                        return arg.then(function(resolvedVal) { 
+                            if (!Array.isArray(resolvedVal)) {
+                                return eachFn([resolvedVal]);
+                            }
+                            return resolvedVal.map(eachFn);
+                        });
+                    }
+                    
                     if (!Array.isArray(vals)) {
                         return eachFn(vals);
                     }
@@ -243,12 +263,20 @@
         if (!this.fn) {
             throw new Error('Inappropriate place to call .with()')
         }
-
+        var self = this;
+        var args = Array.prototype.slice.call(arguments);
+        var val = args[0];
+        
+        if (val.then) {
+            val.then(function (resolvedArg) {
+                return self.args('with', self.fn).apply(null, [resolvedArg]);
+            });
+            return;
+        }
         /**
          * Merge multiple subsets of arguments
          */
         if (this._map) {
-            var self = this;
             return Array.prototype.map.call(arguments, function (args) {
                 if (!Array.isArray(args)) {
                     args = [args];
@@ -297,6 +325,12 @@
      */
     Command.prototype.args = function argsWrapper(name, done) {
         var args = function args() {
+            var val = arguments[0];
+            if (val.then) {
+                val.then(function (resolvedVal) {
+                    return done(merge([resolvedVal]));
+                });
+            }
             return done(merge(arguments));
         };
         args.$name = name;
@@ -306,6 +340,13 @@
          */
         args.__defineGetter__('to', function () {
             return function unmergedArgs() {
+                var val = arguments[0];
+            
+                if (val.then) {
+                    return val.then(function (resolvedVal) {
+                        return done([resolvedVal]);
+                    });
+                }
                 return done(Array.prototype.slice.call(arguments));
             };
         });
@@ -324,6 +365,12 @@
             if (last) {
                 args = last(args);
             }
+            if (args.then) {
+                return args.then(function (resolvedVal) {
+                    return done(resolvedVal);
+                });
+            }
+            
             return done(args);
         }, name);
     };
