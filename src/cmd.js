@@ -192,6 +192,7 @@
                         return fn(args, val);
                     };
                                         
+
                     if (!Array.isArray(vals)) {
                         return eachFn(vals);
                     }
@@ -248,7 +249,7 @@
         if (!this.fn) {
             throw new Error('Inappropriate place to call .with()')
         }
-        
+
         var self = this;
         var args = Array.prototype.slice.call(arguments);
         var val = args[0];
@@ -322,6 +323,13 @@
          */
         args.__defineGetter__('to', function () {
             return function unmergedArgs() {
+                var val = arguments[0];
+            
+                if (val.then) {
+                    return val.then(function (resolvedVal) {
+                        return done([resolvedVal]);
+                    });
+                }
                 return done(Array.prototype.slice.call(arguments));
             };
         });
@@ -340,7 +348,7 @@
             if (last) {
                 args = last(args);
             }
-            
+         
             return done(args);
         }, name);
     };
