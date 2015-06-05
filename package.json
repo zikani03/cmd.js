@@ -3,10 +3,13 @@
   "version": "0.2.2",
   "description": "A chainable utility toolkit for JavaScript.",
   "main": "index.js",
-  "dependencies": {},
+  "dependencies": {
+    "babel-base": "0.0.1"
+  },
   "devDependencies": {
     "chai": "^1.10.0",
     "gulp": "^3.8.8",
+    "gulp-babel": "^5.1.0",
     "gulp-cached": "^1.0.1",
     "gulp-concat": "^2.4.1",
     "gulp-footer": "^1.0.5",
