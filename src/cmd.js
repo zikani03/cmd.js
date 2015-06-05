@@ -1,3 +1,4 @@
+'use strict';
 import {add} from './lib/add.js';
 
 /**
@@ -30,7 +31,7 @@ class Command {
             this.module('add', add);
 			return;
 		}
-        // self.module(module, this[module]);
+        self.module(module, self[module]);
 	}
 	
 	module (name, mod) {
@@ -73,7 +74,7 @@ class Command {
         };
     }
 	
-	registerEachFn (name, fn, module) {
+	registerEachFn (name, fn, plugin) {
 		if (typeof fn !== 'function') {
             throw new Error('cmd.registerEachFn(name, fn), fn was not a function, got ' + typeof fn);
         }
@@ -106,18 +107,26 @@ class Command {
                     return vals.map(eachFn);
                 });
             };
-			/**
+            /**
              * Expect the arguments to be provided in the form cmd.x(...args...)(...vals...)
              * but still allow default argSets to be used
              */
-            const argsLoader = this.args(name, (args) => valsLoader(args));
+            const argsLoader = self.args(name, (args) => valsLoader(args));
+
+            if (typeof plugin.argSets === 'object' && plugin.argSets) {
+                Object.keys(plugin.argSets).forEach(function (key) {
+                    argsLoader.__defineGetter__(key, function () {
+                        return valsLoader(plugin.argSets[key]);
+                    });
+                });
+            }
 			
 			return argsLoader;
 		});
 		return Command.prototype[name];
 	}
 	
-	registerAllFn (name, fn, module) {
+	registerAllFn (name, fn, plugin) {
         if (typeof fn !== 'function') {
             throw new Error('cmd.registerAllFn(name, fn), fn was not a function, got ' + typeof fn);
         }
@@ -156,7 +165,7 @@ class Command {
              * Expect the arguments to be provided in the form cmd.x(...args...)(...vals...)
              * but still allow default argSets to be used
              */
-            var argsLoader = self.args(name, (args) => valsLoader(args));
+            const argsLoader = self.args(name, (args) => valsLoader(args));
 
             if (typeof plugin.argSets === 'object' && plugin.argSets) {
                 Object.keys(plugin.argSets).forEach(function (key) {
@@ -242,6 +251,5 @@ class Command {
     
 
 }
-
 
 export var cmd = new Command();

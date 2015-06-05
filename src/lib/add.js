@@ -1,3 +1,4 @@
+'use strict';
 export const add = {
 	/**
 	 * Command: add(1)(5) - adds args to each value

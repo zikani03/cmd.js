@@ -1,6 +1,7 @@
 {
   "asi": true,
   "boss": true,
+  "esnext": true,
   "browser": true,
   "camelcase": false,
   "curly": true,
@@ -28,6 +29,6 @@
   "undef": true,
   "unused": true,
   "globals": {
-    "cmd": false
+    "cmd": true
   }
 }
