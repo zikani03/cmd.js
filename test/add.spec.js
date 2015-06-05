@@ -1,10 +1,10 @@
-var cmd = require('../src/cmd');
+var cmd = require('../build/cmd').cmd;
 var expect = require('chai').expect;
 
 /**
  * Load the add plugin
  */
-cmd.use('add');
+cmd.use('*');
 
 /**
  * Tests
@@ -15,6 +15,10 @@ describe('cmd.add', function () {
         expect(cmd.add).to.be.a('function');
     });
 
+    it('returns the sum of argument plus each value', function () {
+        expect(cmd.add(1).with(4, 40, 400)).to.deep.equal([5, 41, 401]);
+    });
+    
     it('returns the sum of arguments plus each value', function () {
         expect(cmd.add(1, 2, 3).with(4, 40, 400)).to.deep.equal([10, 46, 406]);
     });
