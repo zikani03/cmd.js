@@ -1,17 +1,16 @@
-(function () {
-    'use strict';
+'use strict';
 
-    this.export = function () {
+export const subtract = {
 
-        /**
-         * Command: subtract(1)(5) - subtracts args from each value
-         * @author Nate Ferrero
-         */
-        this.each = function (args, val) {
-            args.forEach(function (arg) {
-                val -= arg;
-            });
-            return val;
-        };
-    };
-}).call(typeof module === 'undefined' ? this['cmd:lib'].subtract = {} : this);
+    /**
+     * Command: subtract(1)(5) - subtracts args from each value
+     * @author Nate Ferrero
+     */
+    each : function (args, val) {
+        args.forEach(function (arg) {
+            val -= arg;
+        });
+        return val;
+    }
+};
+

@@ -1,16 +1,15 @@
-(function () {
-    'use strict';
+'use strict';
 
-    this.export = function () {
+export const not = {
 
-        /**
-         * Command: not('red') === [false]
-         *      not.raw('red') === false
-         * @author Nate Ferrero
-         */
-        this.args = [];
-        this.each = function (args, val) {
-            return val === false || val === null || val === undefined;
-        };
-    };
-}).call(typeof module === 'undefined' ? this['cmd:lib'].not = {} : this);
+    /**
+     * Command: not('red') === [false]
+     *      not.raw('red') === false
+     * @author Nate Ferrero
+     */
+    args : [],
+    each : function (args, val) {
+        return val === false || val === null || val === undefined;
+    }
+};
+

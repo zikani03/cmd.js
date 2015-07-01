@@ -1,16 +1,15 @@
-(function () {
-    'use strict';
+'use strict';
 
-    this.export = function () {
+export const exists = {
 
-        /**
-         * Command: exists(null) === [false]
-         *      exists.raw(null) === false
-         * @author Nate Ferrero
-         */
-        this.args = [];
-        this.each = function (args, val) {
-            return val !== null && val !== undefined;
-        };
-    };
-}).call(typeof module === 'undefined' ? this['cmd:lib'].exists = {} : this);
+    /**
+     * Command: exists(null) === [false]
+     *      exists.raw(null) === false
+     * @author Nate Ferrero
+     */
+    args : [],
+    each : function (args, val) {
+        return val !== null && val !== undefined;
+    }
+};
+

@@ -1,61 +1,60 @@
-(function () {
-    'use strict';
+'use strict';
 
-    this.export = function (cmd) {
-        /**
-         * Dependencies
-         */
-        cmd.use('compare', 'clone');
+export const sort = {
+    /**
+     * Dependencies
+     */
 
-        /**
-         * Command: sort(function (val) {
-         *   return val;
-         * })(3, 2, 1) === [1, 2, 3]
-         * @author Nate Ferrero
-         */
-        this.all = function (args, vals) {
-            var direction = 1;
-            var local = cmd.clone.with(args);
+    /**
+     * Command: sort(function (val) {
+     *   return val;
+     * })(3, 2, 1) === [1, 2, 3]
+     * @author Nate Ferrero
+     */
+    all : function (args, vals) {
+        // cmd.use('compare', 'clone');
+        var direction = 1;
+        var local = cmd.clone.with(args);
 
-            if (local && local.length && typeof local[0] === 'number') {
-                direction = local.shift();
+        if (local && local.length && typeof local[0] === 'number') {
+            direction = local.shift();
+        }
+
+        if (direction === 0) {
+            return vals;
+        }
+
+        return vals.sort(function (a, b) {
+            if (!local.length) {
+                return direction * cmd.compare(a, b);
             }
+            return direction * cmd.compare(
+                local.map(function (arg) {
+                    if (arg && arg.constructor === cmd.constructor) {
+                        return arg.raw(a);
+                    }
+                    return (arg.raw || arg)(a);
+                }),
+                local.map(function (arg) {
+                    if (arg && arg.constructor === cmd.constructor) {
+                        return arg.raw(b);
+                    }
+                    return (arg.raw || arg)(b);
+                })
+            );
+        });
+    },
 
-            if (direction === 0) {
-                return vals;
-            }
+    argSets : {
+        /**
+         * Argset for ascending sort
+         */
+        asc: [],
 
-            return vals.sort(function (a, b) {
-                if (!local.length) {
-                    return direction * cmd.compare(a, b);
-                }
-                return direction * cmd.compare(
-                    local.map(function (arg) {
-                        if (arg && arg.constructor === cmd.constructor) {
-                            return arg.raw(a);
-                        }
-                        return (arg.raw || arg)(a);
-                    }),
-                    local.map(function (arg) {
-                        if (arg && arg.constructor === cmd.constructor) {
-                            return arg.raw(b);
-                        }
-                        return (arg.raw || arg)(b);
-                    })
-                );
-            });
-        };
+        /**
+         * Argset for descending sort
+         */
+        desc: [-1]
+    }
+};
 
-        this.argSets = {
-            /**
-             * Argset for ascending sort
-             */
-            asc: [],
-
-            /**
-             * Argset for descending sort
-             */
-            desc: [-1]
-        };
-    };
-}).call(typeof module === 'undefined' ? this['cmd:lib'].sort = {} : this);

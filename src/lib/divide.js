@@ -1,17 +1,16 @@
-(function () {
-    'use strict';
+'use strict';
 
-    this.export = function () {
+export const divide = {
 
-        /**
-         * Command: divide(1)(5) - divides each value by all args
-         * @author Nate Ferrero
-         */
-        this.each = function (args, val) {
-            args.forEach(function (arg) {
-                val /= arg;
-            });
-            return val;
-        };
-    };
-}).call(typeof module === 'undefined' ? this['cmd:lib'].divide = {} : this);
+    /**
+     * Command: divide(1)(5) - divides each value by all args
+     * @author Nate Ferrero
+     */
+    each : function (args, val) {
+        args.forEach(function (arg) {
+            val /= arg;
+        });
+        return val;
+    }
+};
+
