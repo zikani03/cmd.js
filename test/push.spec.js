@@ -1,4 +1,4 @@
-var cmd = require('../src/cmd');
+var cmd = require('../build/cmd').cmd;
 var expect = require('chai').expect;
 
 /**
